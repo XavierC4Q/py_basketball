@@ -1,4 +1,4 @@
-from .models import CustomUser, Player, Team, BaseStat
+from .models import CustomUser, Player, Team, Season
 from rest_framework import serializers
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -22,4 +22,11 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team 
         fields = '__all__'
         ordering = ['name']
+
+class SeasonSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Season
+        fields = '__all__'
+        ordering = ['year']
 

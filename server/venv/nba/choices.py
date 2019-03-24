@@ -31,3 +31,16 @@ NBA_TEAMS = (
     ('UTAH JAZZ', 'Utah Jazz'),
     ('NONE', 'None')
 )
+
+HAND = (
+    ('LEFT', 'Left'),
+    ('RIGHT', 'Right')
+)
+
+PLAYER_POSITIONS = (
+    ('PG', 'Point Guard'),
+    ('SG', 'Shooting Guard'),
+    ('SF', 'Small Forward'),
+    ('PF', 'Power Forward'),
+    ('C', 'Center')
+)
