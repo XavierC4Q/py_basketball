@@ -1,0 +1,31 @@
+.form-wrap {
+    width: 85%;
+    margin: 0 auto;
+}
+
+.form-wrap h1 {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    font-size: 250%;
+    color: orange
+}
+
+.form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    background-color: lightgreen
+}
+
+.submit-button {
+    width: 200px;
+    height: auto;
+    font-size: 120%;
+    text-align: center;
+    background-color: red;
+    color: white;
+}

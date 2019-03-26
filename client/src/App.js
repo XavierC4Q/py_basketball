@@ -1,7 +1,13 @@
 import React, {useEffect} from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
+import {Route} from 'react-router-dom';
 
-import { getLoggedInUser } from './actions/users';
+import LoginForm from './components/forms/login';
+import MainHeader from './components/headers/mainHeader';
+
+import {getLoggedInUser} from './actions/users';
+
+import './App.css'
 
 const App = (props) => {
   useEffect(() => {
@@ -9,14 +15,15 @@ const App = (props) => {
   }, []);
 
   return (
-    <div></div>
+    <div>
+      <MainHeader loggedIn={props.loggedInUser}/>
+      <Route path='/login' render={(props) => <LoginForm {...props}/>}/>
+    </div>
   )
 }
 
 const mapStateToProps = (state) => {
-  return {
-    loggedInUser: state.users.loggedInUser
-  }
+  return {loggedInUser: state.users.loggedInUser}
 };
 
 const mapDispatchToProps = (dispatch) => {
