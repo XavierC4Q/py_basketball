@@ -2,10 +2,12 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {Route} from 'react-router-dom';
 
-import LoginForm from './components/forms/login';
-import MainHeader from './components/headers/mainHeader';
-
 import {getLoggedInUser} from './actions/users';
+
+import LoginForm from './components/forms/login';
+import RegisterForm from './components/forms/register';
+import MainHeader from './components/headers/mainHeader';
+import Footer from './components/footer/footer';
 
 import './App.css'
 
@@ -15,10 +17,12 @@ const App = (props) => {
   }, []);
 
   return (
-    <div>
+    <React.Fragment>
       <MainHeader loggedIn={props.loggedInUser}/>
       <Route path='/login' render={(props) => <LoginForm {...props}/>}/>
-    </div>
+      <Route path='/register' render={(props) => <RegisterForm {...props}/>}/>
+      <Footer />
+    </React.Fragment>
   )
 }
 

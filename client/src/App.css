@@ -7,4 +7,8 @@ html, body {
     min-width: 100%;
 }
 
-#root {width: inherit; height: inherit;}
+#root {
+    width: inherit; 
+    height: inherit;
+    position: relative;
+}

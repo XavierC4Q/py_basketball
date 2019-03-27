@@ -14,10 +14,8 @@ import {
 const INITIAL_STATE = {
   loggedInUser: null,
   loginPending: false,
-  loginSuccess: false,
   loginError: '',
   registerPending: false,
-  registerSuccess: false,
   registerError: '',
   logoutPending: false,
   logoutSuccess: false,
@@ -46,8 +44,8 @@ export default(state = INITIAL_STATE, action) => {
       return {
         ...state,
         loginPending: false,
-        loginSuccess: true,
-        loggedInUser: payload
+        loggedInUser: payload,
+        logoutSuccess: false,
       }
 
     case LOGIN_ERROR:
@@ -68,8 +66,8 @@ export default(state = INITIAL_STATE, action) => {
       return {
         ...state,
         registerPending: false,
-        registerSuccess: true,
-        loggedInUser: payload
+        loggedInUser: payload,
+        logoutSuccess: false
       }
 
     case REGISTER_ERROR:
@@ -91,7 +89,7 @@ export default(state = INITIAL_STATE, action) => {
         ...state,
         loggedInUser: null,
         logoutPending: false,
-        logoutSuccess: true
+        logoutSuccess: true,
       }
 
     case LOGOUT_ERROR:

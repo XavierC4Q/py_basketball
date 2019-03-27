@@ -21,7 +21,11 @@ const FormState = (props) => {
         setErrors(initialState);
     };
 
-    return [inputs, handleInput, errors, handleError, resetForm]
+    const clearInputs = () => {
+      setInputs(initialState);
+    }
+
+    return [inputs, handleInput, errors, handleError, resetForm, clearInputs]
 }
 
 export default FormState;

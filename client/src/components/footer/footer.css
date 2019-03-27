@@ -1,0 +1,8 @@
+.footer-wrap {
+    position: relative;
+    bottom: 0;
+    top: auto;
+    height: 15%;
+    width: 100%;
+    background-color: black;
+}

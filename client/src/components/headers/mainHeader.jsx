@@ -9,6 +9,8 @@ const MainHeader = (props) => {
       <Link className='header-a' to='/login'>Login</Link>
       {" "}
       <Link className='header-a' to='/'>Home</Link>
+      {" "}
+      <Link className='header-a' to='/register'>Register</Link>
     </div>
   );
 }
