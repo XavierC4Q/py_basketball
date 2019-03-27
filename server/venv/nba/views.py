@@ -14,9 +14,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
 
     @action(detail=False, methods=['GET'])
-    def fans_of(self, request):
+    def fans(self, request):
         fans_of_team = request.GET.get('team', '')
-        result = CustomUser.objects.filter(favorite_team=fans_of_team)
+        result = CustomUser.objects.filter(favorite_team__icontains=fans_of_team)
 
         serializer = self.get_serializer(result, many=True)
 
@@ -28,9 +28,9 @@ class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
 
     @action(detail=False, methods=['GET'])
-    def same_team(self, request):
+    def team(self, request):
         team_param = request.GET.get('team', '')
-        result = Player.objects.filter(team=team_param)
+        result = Player.objects.filter(team__icontains=team_param)
 
         serializer = self.get_serializer(result, many=True)
 
