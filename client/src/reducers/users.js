@@ -22,8 +22,11 @@ const INITIAL_STATE = {
   logoutError: ''
 };
 
-export default(state = INITIAL_STATE, action) => {
-  const {type, payload} = action;
+export default (state = INITIAL_STATE, action) => {
+  const {
+    type,
+    payload
+  } = action;
 
   switch (type) {
 

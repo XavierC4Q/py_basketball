@@ -13,64 +13,99 @@ import {
 } from '../types/users';
 
 /** GET LOGGED IN USER ACTIONS*/
-const loggedInUserAction = (user) => ({type: GET_LOGGED_IN_USER, payload: user});
+const loggedInUserAction = (user) => ({
+  type: GET_LOGGED_IN_USER,
+  payload: user
+});
 
-export const getLoggedInUser = () => async(dispatch) => {
+export const getLoggedInUser = () => async (dispatch) => {
   try {
     const user = await axios.get('/auth/user/');
+    localStorage.setItem('user', JSON.stringify(user.data));
     dispatch(loggedInUserAction(user.data));
-  } catch {return null}
+  } catch {
+    localStorage.removeItem('user');
+    return null
+  }
 };
 
 /**LOGIN USER ACTIONS */
-const loginUserAction = (user) => ({type: LOGIN_SUCCESS, payload: user});
+const loginUserAction = (user) => ({
+  type: LOGIN_SUCCESS,
+  payload: user
+});
 
-const loginErrorAction = (error) => ({type: LOGIN_ERROR, payload: error});
+const loginErrorAction = (error) => ({
+  type: LOGIN_ERROR,
+  payload: error
+});
 
 export const loginUser = (auth) => (dispatch) => {
-dispatch({type: LOGIN});
-
-setTimeout(async() => {
-  try {
-    await axios.post('/auth/login/', auth);
-    const user = await axios.get('/auth/user/');
-    dispatch(loginUserAction(user.data));
-  } catch {
-    dispatch(loginErrorAction('Wrong username/password'));
-  }
-}, 2500);
+  /**Trigger pending state for login */
+  dispatch({
+    type: LOGIN
+  });
+  setTimeout(async () => {
+    try {
+      await axios.post('/auth/login/', auth);
+      const user = await axios.get('/auth/user/');
+      localStorage.setItem('user', JSON.stringify(user.data));
+      dispatch(loginUserAction(user.data));
+    } catch {
+      dispatch(loginErrorAction('Wrong username/password'));
+    }
+  }, 2500);
 };
 
 /**REGISTER USER ACTIONS */
-const registerUserAction = (user) => ({type: REGISTER_SUCCESS, payload: user});
+const registerUserAction = (user) => ({
+  type: REGISTER_SUCCESS,
+  payload: user
+});
 
-const registerErrorAction = (err) => ({type: REGISTER_ERROR, payload: err});
+const registerErrorAction = (err) => ({
+  type: REGISTER_ERROR,
+  payload: err
+});
 
 export const registerUser = (newUser) => (dispatch) => {
-dispatch({type: REGISTER});
+  /**Trigger pending state for register */
+  dispatch({
+    type: REGISTER
+  });
 
-setTimeout(async() => {
-  try {
-    const success = await axios.post('/auth/register/', newUser);
-    dispatch(registerUserAction(success.data));
-  } catch (err) {
-    dispatch(registerErrorAction(err));
-  }
-}, 2500);
+  setTimeout(async () => {
+    try {
+      const success = await axios.post('/auth/register/', newUser);
+      localStorage.setItem('user', JSON.stringify(success.data));
+      dispatch(registerUserAction(success.data));
+    } catch (err) {
+      dispatch(registerErrorAction(err));
+    }
+  }, 2500);
 };
 
 /**LOGOUT USER ACTIONS */
-const logoutErrorAction = (err) => ({type: LOGOUT_ERROR, payload: err});
+const logoutErrorAction = (err) => ({
+  type: LOGOUT_ERROR,
+  payload: err
+});
 
 export const logoutUser = () => (dispatch) => {
-dispatch({type: LOGOUT});
+  /**Trigger logout pending state */
+  dispatch({
+    type: LOGOUT
+  });
 
-setTimeout(async() => {
-  try {
-    await axios.post('/auth/logout/');
-    dispatch({type: LOGOUT_SUCCESS});
-  } catch (err) {
-    dispatch(logoutErrorAction(err));
-  }
-}, 1200);
+  setTimeout(async () => {
+    try {
+      await axios.post('/auth/logout/');
+      localStorage.removeItem('user');
+      dispatch({
+        type: LOGOUT_SUCCESS
+      });
+    } catch (err) {
+      dispatch(logoutErrorAction(err));
+    }
+  }, 1200);
 };

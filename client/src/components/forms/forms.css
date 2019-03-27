@@ -60,3 +60,10 @@
 .field input:focus {
     outline: none;
 }
+
+.field-error {
+    width: 100%;
+    height: 40px;
+    color: red;
+    text-align: center;
+}
