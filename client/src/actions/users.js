@@ -80,7 +80,7 @@ export const registerUser = (newUser) => (dispatch) => {
       localStorage.setItem('user', JSON.stringify(success.data));
       dispatch(registerUserAction(success.data));
     } catch (err) {
-      dispatch(registerErrorAction(err));
+      dispatch(registerErrorAction('Username is taken'));
     }
   }, 2500);
 };

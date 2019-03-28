@@ -10,7 +10,7 @@ const Field = props => (
 				name={props.fieldname}
 				value={props.fieldvalue}
 				placeholder={props.placeholder}
-				onChange={e => props.handleInput(e)}
+				onChange={props.handleInput}
 			/>
 			<div className='field-error'>{props.fielderror}</div>
 		</div>

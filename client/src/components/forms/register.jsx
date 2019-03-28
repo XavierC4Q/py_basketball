@@ -8,28 +8,28 @@ import { registerUser } from '../../actions/users';
 
 import './forms.css';
 
+const initialInputs = {
+	username: '',
+	password1: '',
+	password2: '',
+	first_name: '',
+	last_name: ''
+};
+
 const RegisterForm = props => {
+	const [ inputs, handleInput, errors, handleErrors, resetForm, clearInputs ] = FormState(initialInputs);
+
 	const isLoggedIn = localStorage.getItem('user');
-    
+
 	useEffect(
-        () => {
+		() => {
 			if (isLoggedIn) {
 				const parsedUser = JSON.parse(isLoggedIn);
 				props.history.push(`/profile/${parsedUser.pk}`);
 			}
-        },
-        [ isLoggedIn ]
+		},
+		[ isLoggedIn ]
 	);
-
-	const initialInputs = {
-		username: '',
-		password1: '',
-		password2: '',
-		first_name: '',
-		last_name: ''
-	};
-
-	const [ inputs, handleInput, errors, handleErrors, resetForm, clearInputs ] = FormState(initialInputs);
 
 	const handleSubmit = e => {
 		e.preventDefault();
@@ -101,7 +101,7 @@ const RegisterForm = props => {
 		</div>
 	);
 };
-
+// LOOK INTO YUP TO REPLACE
 const validate = (inputs, handleErrors) => {
 	let errs = {};
 	const { username, password1, password2, first_name, last_name } = inputs;

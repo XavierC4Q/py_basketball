@@ -13,16 +13,14 @@ const FormState = props => {
 			[e.target.name]: e.target.value
 		});
 
-	const handleError = errs => setErrors({ ...errors, ...errs });
+	const handleError = errs => setErrors({ ...errs });
 
 	const resetForm = () => {
 		setInputs(initialState);
 		setErrors(initialState);
 	};
 
-	const clearInputs = () => {
-		setInputs(initialState);
-	};
+	const clearInputs = () => setInputs(initialState);
 
 	return [ inputs, handleInput, errors, handleError, resetForm, clearInputs ];
 };
