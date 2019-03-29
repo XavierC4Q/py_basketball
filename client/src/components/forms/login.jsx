@@ -1,79 +1,83 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import * as Yup from 'yup';
 
-import FormState from './formState';
+import useFormHook from './useFormHook';
 import Field from './field';
+import LoadingScreen from '../util/loading';
 
 import { loginUser } from '../../actions/users';
 
 import './forms.css';
 
+const validate = Yup.object().shape({
+	username: Yup.string().required('username: Username is required'),
+	password: Yup.string().required('password: Password is required')
+});
+
 const LoginForm = props => {
-    const isLoggedIn = localStorage.getItem('user');
-    
-	useEffect(
-        () => {
-			if (isLoggedIn) {
-                const parsedUser = JSON.parse(isLoggedIn);
-				props.history.push(`/profile/${parsedUser.pk}`);
-			}
-        },
-        [ isLoggedIn ]
-	);
+	const isLoggedIn = localStorage.getItem('user');
 
 	const initialInputs = {
 		username: '',
 		password: ''
 	};
 
-	const [ inputs, handleInput, errors, handleError, resetForm, clearInputs ] = FormState(initialInputs);
+	const formHook = useFormHook(initialInputs);
 
-	const handleSubmit = e => {
+	useEffect(
+		() => {
+			if (isLoggedIn) {
+				const parsedUser = JSON.parse(isLoggedIn);
+				props.history.push(`/profile/${parsedUser.pk}`);
+			}
+		},
+		[ isLoggedIn ]
+	);
+
+	const handleSubmit = async e => {
 		e.preventDefault();
-		let errs = {};
 
-		if (!inputs.username) errs.username = 'Username Missing';
-		if (!inputs.password) errs.password = 'Password Missing';
-
-		if (errs.username || errs.password) {
-			handleError(errs);
-			clearInputs();
-		}
-		else {
-			props.loginUser(inputs);
-			resetForm();
+		try {
+			await validate.validate(formHook.inputs, { abortEarly: false });
+			await props.loginUser(formHook.inputs);
+			formHook.resetForm();
+		} catch (err) {
+			formHook.handleErrors(err.errors);
 		}
 	};
 
 	return (
-		<div className='form-wrap'>
-			<h1>Login Here</h1>
-			<form className='form' onSubmit={handleSubmit}>
-				<Field
-					label='Username'
-					fieldname='username'
-					fieldvalue={inputs.username}
-					placeholder='Enter Your Username'
-					fielderror={errors.username}
-					handleInput={handleInput}
-					classNames='form-section'
-				/>
-				<Field
-					label='Password'
-					fieldname='password'
-					fieldvalue={inputs.password}
-					placeholder='Enter Your Password'
-					fielderror={errors.password}
-					handleInput={handleInput}
-					classNames='form-section'
-				/>
-				<div>
-					<button className='submit-button' type='submit'>
-						Submit
-					</button>
-				</div>
-			</form>
-		</div>
+		<LoadingScreen active={props.loginPending}>
+			<div className='form-wrap'>
+				<h1>Login Here</h1>
+				<form className='form' onSubmit={handleSubmit}>
+					<Field
+						label='Username'
+						fieldname='username'
+						fieldvalue={formHook.inputs.username}
+						placeholder='Enter Your Username'
+						fielderror={formHook.errors.username}
+						handleInput={formHook.handleInput}
+						classNames='form-section'
+					/>
+					<Field
+						label='Password'
+						fieldname='password'
+						fieldvalue={formHook.inputs.password}
+						placeholder='Enter Your Password'
+						fielderror={formHook.errors.password}
+						handleInput={formHook.handleInput}
+						classNames='form-section'
+					/>
+					<div>
+						<button className='submit-button' type='submit'>
+							Submit
+						</button>
+					</div>
+				</form>
+			</div>
+		</LoadingScreen>
 	);
 };
 

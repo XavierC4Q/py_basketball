@@ -76,9 +76,10 @@ export const registerUser = (newUser) => (dispatch) => {
 
   setTimeout(async () => {
     try {
-      const success = await axios.post('/auth/register/', newUser);
-      localStorage.setItem('user', JSON.stringify(success.data));
-      dispatch(registerUserAction(success.data));
+      await axios.post('/auth/register/', newUser);
+      const user = await axios.get('/auth/user/');
+      localStorage.setItem('user', JSON.stringify(user.data));
+      dispatch(registerUserAction(user.data));
     } catch (err) {
       dispatch(registerErrorAction('Username is taken'));
     }

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import * as Yup from 'yup';
 
-import FormState from './formState';
+import useFormHook from './useFormHook';
 import Field from './field';
 
 import { registerUser } from '../../actions/users';
@@ -16,8 +17,24 @@ const initialInputs = {
 	last_name: ''
 };
 
+const validate = Yup.object().shape({
+	username: Yup.string()
+		.min(8, 'username: Username must be at least 8 characters')
+		.max(16, 'username: Username cannot excede 16 characters')
+		.required('username: Username is required'),
+	password1: Yup.string()
+		.min(8, 'password1: Password must be at least 8 characters')
+		.max(21, 'Password cannot excede 21 characters')
+		.required('password1: Password is required'),
+	password2: Yup.string()
+		.oneOf([ Yup.ref('password1'), null ], 'password2: Passwords must match')
+		.required('password2: Confirm password is required'),
+	first_name: Yup.string().required('first_name: First name is required'),
+	last_name: Yup.string().required('last_name: Last name is required')
+});
+
 const RegisterForm = props => {
-	const [ inputs, handleInput, errors, handleErrors, resetForm, clearInputs ] = FormState(initialInputs);
+	const formHook = useFormHook(initialInputs);
 
 	const isLoggedIn = localStorage.getItem('user');
 
@@ -31,17 +48,15 @@ const RegisterForm = props => {
 		[ isLoggedIn ]
 	);
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
 
-		const validForm = validate(inputs, handleErrors);
-
-		if (validForm) {
-			props.registerUser(inputs);
-			resetForm();
-		}
-		else {
-			clearInputs();
+		try {
+			await validate.validate(formHook.inputs, { abortEarly: false });
+			await props.registerUser(formHook.inputs);
+			formHook.resetForm();
+		} catch (err) {
+			formHook.handleErrors(err.errors);
 		}
 	};
 
@@ -50,48 +65,47 @@ const RegisterForm = props => {
 			<h1>Register Here</h1>
 			<form className='form' onSubmit={handleSubmit}>
 				<Field
-					label='Username'
+					fieldvalue={formHook.inputs.username}
 					fieldname='username'
-					value={inputs.username}
-					placeholder='Enter Your Username'
-					fielderror={errors.username}
-					handleInput={handleInput}
-					classNames='form-section'
+					placeholder='Enter Username'
+					label='Username'
+					handleInput={formHook.handleInput}
+					fielderror={formHook.errors.username}
 				/>
 				<Field
 					label='Password'
 					fieldname='password1'
-					value={inputs.password1}
+					fieldvalue={formHook.inputs.password1}
 					placeholder='Enter Your Password'
-					fielderror={errors.password1}
-					handleInput={handleInput}
+					fielderror={formHook.errors.password1}
+					handleInput={formHook.handleInput}
 					classNames='form-section'
 				/>
 				<Field
 					label='Confirm Password'
 					fieldname='password2'
-					value={inputs.password2}
+					fieldvalue={formHook.inputs.password2}
 					placeholder='Confirm Your Password'
-					fielderror={errors.password2}
-					handleInput={handleInput}
+					fielderror={formHook.errors.password2}
+					handleInput={formHook.handleInput}
 					classNames='form-section'
 				/>
 				<Field
 					label='First Name'
 					fieldname='first_name'
-					value={inputs.first_name}
+					fieldvalue={formHook.inputs.first_name}
 					placeholder='Enter Your First Name'
-					fielderror={errors.first_name}
-					handleInput={handleInput}
+					fielderror={formHook.errors.first_name}
+					handleInput={formHook.handleInput}
 					classNames='form-section'
 				/>
 				<Field
 					label='Last Name'
 					fieldname='last_name'
-					value={inputs.last_name}
+					fieldvalue={formHook.inputs.last_name}
 					placeholder='Enter Your Last Name'
-					fielderror={errors.last_name}
-					handleInput={handleInput}
+					fielderror={formHook.errors.last_name}
+					handleInput={formHook.handleInput}
 					classNames='form-section'
 				/>
 				<button type='submit' className='submit-button'>
@@ -100,44 +114,6 @@ const RegisterForm = props => {
 			</form>
 		</div>
 	);
-};
-// LOOK INTO YUP TO REPLACE
-const validate = (inputs, handleErrors) => {
-	let errs = {};
-	const { username, password1, password2, first_name, last_name } = inputs;
-	if (!username) {
-		errs.username = 'Username is missing';
-	}
-	if (!password1) {
-		errs.password1 = 'Password is missing';
-	}
-	if (!password2) {
-		errs.password2 = 'Confirm password is missing';
-	}
-	if (!first_name) {
-		errs.first_name = 'First name is required';
-	}
-	if (!last_name) {
-		errs.last_name = 'Last name is required';
-	}
-	if (username.length < 6) {
-		errs.username = 'Username is too short';
-	}
-	if (password1.length < 8) {
-		errs.password1 = 'Password is too short';
-	}
-	if (password1 !== password2) {
-		errs.password1 = 'Passwords must match';
-		errs.password2 = 'Passwords must match';
-	}
-
-	if (Object.keys(errs).length) {
-		handleErrors(errs);
-		return false;
-	}
-	else {
-		return true;
-	}
 };
 
 const mapStateToProps = state => {
